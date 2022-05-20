@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="VideoClubModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="Alquilere">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="idUsuario" Type="Int32" Nullable="false" />
+    <Property Name="idPelicula" Type="Int32" Nullable="false" />
+    <Property Name="devuelto" Type="Boolean" Nullable="false" />
+    <NavigationProperty Name="Pelicula" Relationship="Self.FK_Alquileres_Peliculas" FromRole="Alquileres" ToRole="Peliculas" />
+    <NavigationProperty Name="Usuario" Relationship="Self.FK_Alquileres_Usuarios" FromRole="Alquileres" ToRole="Usuarios" />
+  </EntityType>
+  <EntityType Name="Pelicula">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="titulo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="sinopsis" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+    <NavigationProperty Name="Alquileres" Relationship="Self.FK_Alquileres_Peliculas" FromRole="Peliculas" ToRole="Alquileres" />
+  </EntityType>
+  <EntityType Name="Usuario">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="usu" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="pass" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <NavigationProperty Name="Alquileres" Relationship="Self.FK_Alquileres_Usuarios" FromRole="Usuarios" ToRole="Alquileres" />
+  </EntityType>
+  <Association Name="FK_Alquileres_Peliculas">
+    <End Role="Peliculas" Type="Self.Pelicula" Multiplicity="1" />
+    <End Role="Alquileres" Type="Self.Alquilere" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Peliculas">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="Alquileres">
+        <PropertyRef Name="idPelicula" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Alquileres_Usuarios">
+    <End Role="Usuarios" Type="Self.Usuario" Multiplicity="1" />
+    <End Role="Alquileres" Type="Self.Alquilere" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Usuarios">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="Alquileres">
+        <PropertyRef Name="idUsuario" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="VideoClubEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="Alquileres" EntityType="Self.Alquilere" />
+    <EntitySet Name="Peliculas" EntityType="Self.Pelicula" />
+    <EntitySet Name="Usuarios" EntityType="Self.Usuario" />
+    <AssociationSet Name="FK_Alquileres_Peliculas" Association="Self.FK_Alquileres_Peliculas">
+      <End Role="Peliculas" EntitySet="Peliculas" />
+      <End Role="Alquileres" EntitySet="Alquileres" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Alquileres_Usuarios" Association="Self.FK_Alquileres_Usuarios">
+      <End Role="Usuarios" EntitySet="Usuarios" />
+      <End Role="Alquileres" EntitySet="Alquileres" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

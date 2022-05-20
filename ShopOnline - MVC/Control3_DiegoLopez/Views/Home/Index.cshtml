@@ -1,0 +1,83 @@
+﻿
+@model IEnumerable<Control3_DiegoLopez.Models.Articulo>
+
+@using Control3_DiegoLopez.Models;
+
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_PlantillaInicio.cshtml";
+}
+
+@section Enlaces
+{
+    <!-- Todo este control se podría evitar si se hiciecen distintas páginas para cada categoría -->
+    @if (ViewBag.idCategoria == null)
+    {
+        <li class="nav-item">@Html.ActionLink("Inicio", "Index", "Home", null, new { @class = "nav-link active" })</li>
+    }
+    else
+    {
+        <li class="nav-item">@Html.ActionLink("Inicio", "Index", "Home", null, new { @class = "nav-link text-white" })</li>
+    }
+    @foreach (var categoria in (List<Categoria>)ViewData["Categorias"])
+    {
+        using (Html.BeginForm("Index", "Home", FormMethod.Post))
+        {
+            @Html.Hidden("idCategoria", categoria.id)
+            if (ViewBag.idCategoria == categoria.id)
+            {
+                <input class="nav-link active" type="submit" value="@categoria.nombre" />
+            }
+            else
+            {
+                <input class="nav-link text-white" type="submit" value="@categoria.nombre" />
+            }
+        }
+    }
+    @if (Session["idUsuario"] == null)
+    {
+        <li class="nav-item">@Html.ActionLink("Iniciar sesión", "LogIn", "Home", null, new { @class = "nav-link bg-success text-white" })</li>
+    }
+    else
+    {
+        <li class="nav-item">@Html.ActionLink("Cerrar sesión", "LogOut", "Home", null, new { @class = "nav-link bg-danger text-white" })</li>
+    }
+    @if (Session["Carrito"] != null)
+    {
+        <li class="nav-item"><a href="/Home/Carrito" class="nav-link text-white"><i class="fa-solid fa-cart-shopping fa-xl"></i></a></li>
+    }
+
+}
+
+<main class="album mt-5 p-3">
+    <article class="container-fluid row d-flex justify-content-center flex-wrap">
+        
+        @foreach (var articulo in Model)
+        {
+
+            <div class="col-3 my-2">
+                <section class="card shadow-sm">
+                    <img runat="server" ID="imgImagen" src="https://loremflickr.com/640/360/@articulo.id" alt="Imagen del artículo">
+                    <div class="card-body">
+
+                        <h5 class="card-title">@articulo.nombre</h5>
+                        <p class="card-text">@articulo.descripcion</p>
+
+                        <div class="d-flex mt-2 justify-content-between flex-wrap">
+                            <h5>@Convert.ToDouble(articulo.precio) €</h5>
+
+                            @using (Html.BeginForm("AddCarrito", "Home", FormMethod.Post))
+                            {
+                                @Html.Hidden("id", articulo.id)
+                                <h6 class="card-text" style="width:100%">Cantidad: @Html.TextBox("cantidad", 1, new { @type = "number", @min = "1", @max = articulo.stock })</h6>
+                                <input class="btn btn-primary mt-2" type="submit" value="Añadir al carrito" />
+                            }
+                        </div>
+                    </div>
+                </section>
+            </div>
+        }
+    </article>
+</main>
+

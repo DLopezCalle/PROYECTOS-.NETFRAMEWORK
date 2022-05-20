@@ -1,0 +1,55 @@
+﻿
+@using Control3_DiegoLopez.Models;
+
+@{
+    ViewBag.Title = "LogIn";
+    Layout = "~/Views/Shared/_PlantillaFormulario.cshtml";
+}
+
+@section Enlaces
+{
+    <li class="nav-item">@Html.ActionLink("Inicio", "Index", "Home", null, new { @class = "nav-link text-white" })</li>
+    @foreach (var categoria in (List<Categoria>)ViewData["Categorias"])
+    {
+        using (Html.BeginForm("Index", "Home", FormMethod.Post))
+        {
+            @Html.Hidden("idCategoria", categoria.id)
+            <input class="nav-link text-white" type="submit" value="@categoria.nombre" />
+        }
+    }
+    <li class="nav-item">@Html.ActionLink("Iniciar sesión", "LogIn", "Home", null, new { @class = "nav-link active" })</li>
+    @if (Session["Carrito"] != null)
+    {
+        <li class="nav-item"><a href="/Home/Carrito" class="nav-link text-white"><i class="fa-solid fa-cart-shopping fa-xl"></i></a></li>
+    }
+}
+
+<h1>Inicio de sesión</h1>
+
+@using (Html.BeginForm("LogIn", "Home", FormMethod.Post))
+{
+
+    <!-- Usuario -->
+    <div class="form-outline mb-4">
+        @Html.TextBox("usuario", "", new { @class = "form-control form-control-lg", @placeholder = "Introduzca su nombre de usuario", @required = "true" })
+        <label class="form-label" for="form3Example3">Usuario</label>
+    </div>
+
+    <!-- Contraseña -->
+    <div class="form-outline mb-3">
+        @Html.TextBox("pass", "", new { @type = "password", @class = "form-control form-control-lg", @placeholder = "Introduzca su contraseña", @required = "true" })
+        <label class="form-label" for="form3Example4">Contraseña</label>
+    </div>
+
+    <!-- Boton -->
+    <div class="text-center text-lg-start mt-4 pt-2">
+        <input class="btn btn-primary p-2 fs-5" type="submit" value="Iniciar sesión" />
+        <p class="small fw-bold mt-2 pt-1 mb-0">
+
+            ¿No estás registrado?
+            @Html.ActionLink("Regístrate", "LogUp", "Home", null, new { @class = "link-danger" })
+
+        </p>
+    </div>
+}
+

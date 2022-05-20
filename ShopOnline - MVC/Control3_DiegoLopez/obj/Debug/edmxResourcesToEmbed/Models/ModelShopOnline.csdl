@@ -1,0 +1,125 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="ShopOnlineModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="Articulo">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="idCategoria" Type="Int32" Nullable="false" />
+    <Property Name="nombre" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="descripcion" Type="String" MaxLength="255" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="precio" Type="Decimal" Precision="19" Scale="4" Nullable="false" />
+    <Property Name="stock" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="Categoria" Relationship="Self.FK_Articulos_Categorias" FromRole="Articulos" ToRole="Categorias" />
+    <NavigationProperty Name="Pedidos" Relationship="Self.FK_Pedidos_Articulos" FromRole="Articulos" ToRole="Pedidos" />
+  </EntityType>
+  <EntityType Name="Categoria">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="nombre" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <NavigationProperty Name="Articulos" Relationship="Self.FK_Articulos_Categorias" FromRole="Categorias" ToRole="Articulos" />
+  </EntityType>
+  <EntityType Name="LineasPedido">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="idPedido" Type="Int32" Nullable="false" />
+    <Property Name="cantidad" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="Pedido" Relationship="Self.FK_LineasPedidos_Pedidos" FromRole="LineasPedidos" ToRole="Pedidos" />
+  </EntityType>
+  <EntityType Name="Pedido">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="idUsuario" Type="Int32" Nullable="false" />
+    <Property Name="idArticulo" Type="Int32" Nullable="false" />
+    <Property Name="fecha" Type="DateTime" Nullable="false" Precision="0" />
+    <NavigationProperty Name="Articulo" Relationship="Self.FK_Pedidos_Articulos" FromRole="Pedidos" ToRole="Articulos" />
+    <NavigationProperty Name="LineasPedidos" Relationship="Self.FK_LineasPedidos_Pedidos" FromRole="Pedidos" ToRole="LineasPedidos" />
+    <NavigationProperty Name="Usuario" Relationship="Self.FK_Pedidos_Usuarios" FromRole="Pedidos" ToRole="Usuarios" />
+  </EntityType>
+  <EntityType Name="Usuario">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="usuario1" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="pass" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <NavigationProperty Name="Pedidos" Relationship="Self.FK_Pedidos_Usuarios" FromRole="Usuarios" ToRole="Pedidos" />
+  </EntityType>
+  <Association Name="FK_Articulos_Categorias">
+    <End Role="Categorias" Type="Self.Categoria" Multiplicity="1" />
+    <End Role="Articulos" Type="Self.Articulo" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Categorias">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="Articulos">
+        <PropertyRef Name="idCategoria" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Pedidos_Articulos">
+    <End Role="Articulos" Type="Self.Articulo" Multiplicity="1" />
+    <End Role="Pedidos" Type="Self.Pedido" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Articulos">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="Pedidos">
+        <PropertyRef Name="idArticulo" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_LineasPedidos_Pedidos">
+    <End Role="Pedidos" Type="Self.Pedido" Multiplicity="1" />
+    <End Role="LineasPedidos" Type="Self.LineasPedido" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Pedidos">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="LineasPedidos">
+        <PropertyRef Name="idPedido" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Pedidos_Usuarios">
+    <End Role="Usuarios" Type="Self.Usuario" Multiplicity="1" />
+    <End Role="Pedidos" Type="Self.Pedido" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Usuarios">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="Pedidos">
+        <PropertyRef Name="idUsuario" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="ShopOnlineEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="Articulos" EntityType="Self.Articulo" />
+    <EntitySet Name="Categorias" EntityType="Self.Categoria" />
+    <EntitySet Name="LineasPedidos" EntityType="Self.LineasPedido" />
+    <EntitySet Name="Pedidos" EntityType="Self.Pedido" />
+    <EntitySet Name="Usuarios" EntityType="Self.Usuario" />
+    <AssociationSet Name="FK_Articulos_Categorias" Association="Self.FK_Articulos_Categorias">
+      <End Role="Categorias" EntitySet="Categorias" />
+      <End Role="Articulos" EntitySet="Articulos" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Pedidos_Articulos" Association="Self.FK_Pedidos_Articulos">
+      <End Role="Articulos" EntitySet="Articulos" />
+      <End Role="Pedidos" EntitySet="Pedidos" />
+    </AssociationSet>
+    <AssociationSet Name="FK_LineasPedidos_Pedidos" Association="Self.FK_LineasPedidos_Pedidos">
+      <End Role="Pedidos" EntitySet="Pedidos" />
+      <End Role="LineasPedidos" EntitySet="LineasPedidos" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Pedidos_Usuarios" Association="Self.FK_Pedidos_Usuarios">
+      <End Role="Usuarios" EntitySet="Usuarios" />
+      <End Role="Pedidos" EntitySet="Pedidos" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

@@ -1,0 +1,83 @@
+﻿
+@using Control3_DiegoLopez.Models;
+
+@{
+    ViewBag.Title = "Carrito";
+    Layout = "~/Views/Shared/_PlantillaInicio.cshtml";
+}
+
+@section Enlaces
+{
+
+    <li class="nav-item">@Html.ActionLink("Inicio", "Index", "Home", null, new { @class = "nav-link text-white" })</li>
+    @foreach (var categoria in (List<Categoria>)ViewData["Categorias"])
+    {
+        using (Html.BeginForm("Index", "Home", FormMethod.Post))
+        {
+            @Html.Hidden("idCategoria", categoria.id)
+            <input class="nav-link text-white" type="submit" value="@categoria.nombre" />
+        }
+    }
+    @if (Session["idUsuario"] == null)
+    {
+        <li class="nav-item">@Html.ActionLink("Iniciar sesión", "LogIn", "Home", null, new { @class = "nav-link bg-success text-white" })</li>
+    }
+    else
+    {
+        <li class="nav-item">@Html.ActionLink("Cerrar sesión", "LogOut", "Home", null, new { @class = "nav-link bg-danger text-white" })</li>
+    }
+    <li class="nav-item"><a href="/Home/Carrito" class="nav-link active"><i class="fa-solid fa-cart-shopping fa-xl"></i></a></li>
+}
+
+<div class="container">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Nombre</th>
+                <th scope="col">Cantidad</th>
+                <th scope="col">Subtotal</th>
+                <th scope="col">Borrar por cantidad</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                double total = 0.0;
+                foreach (var linea in (List<LineasPedido>)(Session["Carrito"]))
+                {
+                    Articulo articulo = new Articulo();
+
+                    foreach (var a in (List<Articulo>)(ViewData["Articulos"]))
+                    {
+                        if (a.id == linea.idArticulo)
+                        {
+                            articulo = a;
+                        }
+                    }
+                    total += Convert.ToDouble(articulo.precio * linea.cantidad);
+                <tr>
+                    <td>@articulo.nombre</td>
+                    <td>@linea.cantidad</td>
+                    <td>@(Convert.ToDouble(articulo.precio * linea.cantidad))€</td>
+                    <td class="">
+                        @using (Html.BeginForm("BorrarCarrito", "Home", FormMethod.Post))
+                        {
+                            @Html.Hidden("idArticulo", linea.idArticulo)
+                            @Html.TextBox("cantidad", 1, new { @type = "number", @min = "1", @max = linea.cantidad, @class = "form-control", @style = "width: 30%; display: inline-block;" })
+                            <input class="btn btn-danger" type="submit" value="x" />
+                        }
+                    </td>
+                </tr>
+                }
+            }
+            <tr class="fs-4">
+                <td>
+                    @Html.ActionLink("Finalizar compra", "Comprar", "Home", null, new { @class = "btn btn-primary" })
+                    @Html.ActionLink("Borrar carrito", "DeadCarrito", "Home", null, new { @class = "btn btn-danger" })
+                </td>
+                <td style="text-align:right;">Total</td>
+                <td>@total€</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
